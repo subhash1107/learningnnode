@@ -10,10 +10,14 @@ const port = 7777;
 //     res.send('test')
 // })
 
-app.get("/user/:userID/:name",(req,res)=>{
-    console.log(req.params)
+app.get("/user",(req,res)=>{
+    console.log(req.query)
     res.send({"name":"subhash","post":"senior software developer"})
 })
+// app.get("/user/:userID/:name",(req,res)=>{
+//     console.log(req.params)
+//     res.send({"name":"subhash","post":"senior software developer"})
+// })
 
 app.listen(port,()=>{
     console.log('this app is running on port',port);
