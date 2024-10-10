@@ -1,7 +1,9 @@
 import e from "express";
+import { adminAuth, userAuth } from "./middleware/auth.js";
 
 const app = e()
 const port = 7777;
+// const {adminAuth,userAuth} = require("./middleware/auth")
 
 // app.use('/hello',(req,res)=>{
 //     res.send('hello')
@@ -49,6 +51,37 @@ const port = 7777;
 // ################### end ########################
 
 
+// ################ middlewares and need for it #####################
+
+//1. this is the hard way to write middleware
+
+// app.get("/admin",(req,res,next)=>{
+//     const token = "xy";
+//     if(token === "xyz"){
+//         next();
+//     }else{
+//         res.status(404).send("error 404 not found")
+//     }
+// },
+// (req,res,next)=>{
+//     res.send("admin authorized")
+// })
+
+// 2. this is the effective way to use middleware
+
+// app.use("/admin",adminAuth)
+
+// app.get("/admin",(req,res,next)=>{
+//     res.send("successfully authenticated")
+// })
+// app.get("/user",userAuth,(req,res,next)=>{
+//     res.send("successfully authenticated")
+// })
+// app.get("/user/login",(req,res,next)=>{
+//     console.log("login");
+    
+//     res.send("proceed to login")
+// })
 
 app.listen(port,()=>{
     console.log('this app is running on port',port);
