@@ -83,6 +83,34 @@ const port = 7777;
 //     res.send("proceed to login")
 // })
 
+
+
+// ########### error handlers#########
+
+// 1. the best way to handle error is to use try catch method 
+
+// app.get("/user",adminAuth,(req,res,next)=>{
+//     // throw new error("parameter is not defined")
+//     try{
+//        res.send("hii this is me")
+//     }
+//     catch(err){
+//         res.send("this is error message" + err.message)
+//     }
+// })
+// app.get("/admin",(req,res,next)=>{
+//     throw new error("wrong input")
+// })
+
+
+// // 2. this is the way that should we memorise while writing node code 
+// app.use("/",(err,req,res,next)=>{
+//     if(err){
+//         res.send(err.message)
+//     }
+// })
+
+// ########################################/
 app.listen(port,()=>{
     console.log('this app is running on port',port);
     
