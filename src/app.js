@@ -1,8 +1,24 @@
 import e from "express";
-import { adminAuth, userAuth } from "./middleware/auth.js";
+// import { adminAuth, userAuth } from "./middleware/auth.js";
+import { connectDb } from "./config/database.js";
+import { User } from "./models/user.js";
+
 
 const app = e()
 const port = 7777;
+
+app.post("/signup", async(req,res,next)=>{
+    const user = new User({
+        firstName:"Virat",
+        lastName:"Kohli",
+        eMail:"virat.kohli@gmail.com",
+        age:25
+    })
+
+    await user.save();
+    res.send("response is submitted")
+    
+})
 // const {adminAuth,userAuth} = require("./middleware/auth")
 
 // app.use('/hello',(req,res)=>{
@@ -111,7 +127,18 @@ const port = 7777;
 // })
 
 // ########################################/
-app.listen(port,()=>{
-    console.log('this app is running on port',port);
-    
+
+
+
+
+
+
+connectDb().then(()=>{
+    console.log("database connection established successfully");
+    app.listen(port,()=>{
+        console.log("this app is running on port ",port);
+        
+    })
+}).catch((err)=>{
+    console.log("we encountered an error" + err.message)
 })

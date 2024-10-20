@@ -5,13 +5,14 @@
     "start": "node src/app.js"
   },
   "dependencies": {
-    "express": "^4.21.0"
+    "axios": "^1.7.7",
+    "express": "^4.21.0",
+    "mongoose": "^8.7.1"
   },
   "name": "aksaini1",
   "version": "1.0.0",
   "description": "test case",
   "main": "index.js",
-  "devDependencies": {},
   "author": "subhash yadav",
   "license": "ISC"
 }
