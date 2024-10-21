@@ -14,9 +14,14 @@ app.post("/signup", async(req,res,next)=>{
         eMail:"virat.kohli@gmail.com",
         age:25
     })
-
-    await user.save();
+     try{
+        await user.save();
     res.send("response is submitted")
+     }
+     catch{
+        res.send("there is some error")
+     }
+    
     
 })
 // const {adminAuth,userAuth} = require("./middleware/auth")
