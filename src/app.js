@@ -2,18 +2,18 @@ import e from "express";
 // import { adminAuth, userAuth } from "./middleware/auth.js";
 import { connectDb } from "./config/database.js";
 import { User } from "./models/user.js";
+import express from "express";
 
 
 const app = e()
 const port = 7777;
 
+app.use(express.json())
+
 app.post("/signup", async(req,res,next)=>{
-    const user = new User({
-        firstName:"Virat",
-        lastName:"Kohli",
-        eMail:"virat.kohli@gmail.com",
-        age:25
-    })
+    const user = new User(
+        req.body
+    )
      try{
         await user.save();
     res.send("response is submitted")
@@ -21,7 +21,8 @@ app.post("/signup", async(req,res,next)=>{
      catch{
         res.send("there is some error")
      }
-    
+    // res.send("response submitted")
+    // console.log(req.body);    
     
 })
 // const {adminAuth,userAuth} = require("./middleware/auth")
