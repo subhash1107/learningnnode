@@ -10,6 +10,36 @@ const port = 7777;
 
 app.use(express.json())
 
+app.get("/get", async(req,res,next)=>{
+    // const found = await User.find({eMail:"sbhash.y02@gmail.com"})
+    // const found = await User.findOne({eMail:"rohit.kohli@gmail.com"})
+    const found = await User.findOne({})
+    if(found.length != 0){
+        try{
+            console.log(found);
+            res.send("user found")
+            
+        }catch{
+            res.send("user not found")
+        }
+    }else{
+        res.send("ther is some error finding in User")
+    }
+} )
+app.get("/feed", async(req,res,next)=>{
+    const found = await User.find({})
+    if(found.length != 0){
+        try{
+            console.log(found);
+            res.send("user found")
+            
+        }catch{
+            res.send("user not found")
+        }
+    }else{
+        res.send("ther is some error finding in User")
+    }
+} )
 app.post("/signup", async(req,res,next)=>{
     const user = new User(
         req.body
