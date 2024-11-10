@@ -55,6 +55,21 @@ app.post("/signup", async(req,res,next)=>{
     // console.log(req.body);    
     
 })
+// ###################deleting user details###################
+app.delete("/deleteuser", async (req,res,next)=>{
+    const UserId = req.body.UserId
+    try{
+        const user = await User.findByIdAndDelete(UserId)
+        if (!user){
+          res.send("user not found")
+        }else{
+            res.send("user deleted successfully")
+        }
+    }
+    catch{
+        res.send("we've encountered an error while doing operation")
+    }
+})
 // const {adminAuth,userAuth} = require("./middleware/auth")
 
 // app.use('/hello',(req,res)=>{
