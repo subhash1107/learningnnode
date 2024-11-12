@@ -55,7 +55,7 @@ app.post("/signup", async(req,res,next)=>{
     // console.log(req.body);    
     
 })
-// ###################deleting user details###################
+// ################### deleting user details ###################
 app.delete("/deleteuser", async (req,res,next)=>{
     const UserId = req.body.UserId
     try{
@@ -70,6 +70,40 @@ app.delete("/deleteuser", async (req,res,next)=>{
         res.send("we've encountered an error while doing operation")
     }
 })
+
+
+// ################### Updating data using patch #################
+app.patch("/updatedata", async (req, res, next) => {
+    const UserId = req.body.UserId;
+    const data = req.body;
+    try {
+        const user = await User.findByIdAndUpdate(UserId, data, { returnDocument : 'before' });
+        // console.log(user)
+
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+
+        res.send("User updated successfully");
+    } catch (err) {
+        console.error(err);  // Log the error for debugging
+        res.status(500).send("There is some error in updating data");
+    }
+});
+
+// #################### Finding all data #####################
+// app.get("/users", async (req, res, next)=>{
+//     const uSers = await User.find()
+//     try{
+//         console.log(uSers);
+//         res.send("user found successfully")
+//     }catch{
+//         res.send("user not found")
+//     }
+    
+// })
+
+
 // const {adminAuth,userAuth} = require("./middleware/auth")
 
 // app.use('/hello',(req,res)=>{
