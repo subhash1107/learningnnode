@@ -85,11 +85,17 @@ app.patch("/updatedata", async (req, res, next) => {
         if (!user) {
             return res.status(404).send("User not found");
         }
+        const ALLOWED_UPDATE = ["firstName","lastName", "age", "about","photoUrl","skills","password"];
+        const isUpdateAllowed = Object.keys(data).every((k)=> ALLOWED_UPDATE.includes(k))
+        if(!isUpdateAllowed){
+            throw new Error("the field you want to update is not allwed");
+            
+        }
 
         res.send("User updated successfully");
     } catch (err) {
         console.error(err);  
-        res.status(500).send("There is some error in updating data");
+        res.status(500).send("There is some error in updating data\n"+err.message);
     }
 });
 

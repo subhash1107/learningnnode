@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema(
             validate(value){
                 if(value!="https://tinyurl.com/profile07200"){
                     const existingPic = User.findOne(value);
-                if(existingPic){
+                if(existingPic === value){
                     throw new Error("User already exist");
                     
                 }                }
