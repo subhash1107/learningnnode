@@ -48,8 +48,8 @@ app.post("/signup", async(req,res,next)=>{
         await user.save();
     res.send("response is submitted")
      }
-     catch{
-        res.send("there is some error")
+     catch(err){
+        res.send("there is some error\n"+ err.message)
      }
     // res.send("response submitted")
     // console.log(req.body);    
@@ -77,26 +77,9 @@ app.patch("/updatedata", async (req, res, next) => {
     const UserId = req.body.UserId;
     const data = req.body;
     try {
-        const user = await User.findByIdAndUpdate(UserId, data, { returnDocument : 'before' });
-        // console.log(user)
-
-        if (!user) {
-            return res.status(404).send("User not found");
-        }
-
-        res.send("User updated successfully");
-    } catch (err) {
-        console.error(err);  // Log the error for debugging
-        res.status(500).send("There is some error in updating data");
-    }
-});
-
-// ############   #######################
-app.patch("/updatebyemail", async (req, res, next) => {
-    const Email = req.body.eMail;
-    const data = req.body;
-    try {
-        const user = await User.findOneAndUpdate({eMail:Email}, data, { returnDocument : 'before' });
+        const user = await User.findByIdAndUpdate(UserId, data, { returnDocument : 'before',
+            runValidators : true,
+         });
         // console.log(user)
 
         if (!user) {
@@ -107,6 +90,25 @@ app.patch("/updatebyemail", async (req, res, next) => {
     } catch (err) {
         console.error(err);  
         res.status(500).send("There is some error in updating data");
+    }
+});
+
+// ############   #######################
+app.patch("/updatebyemail", async (req, res, next) => {
+    const Email = req.body.eMail;
+    const data = req.body;
+    try {
+        const user = await User.findOneAndUpdate({eMail:Email}, data, { returnDocument : 'before', runValidators:true });
+        // console.log(user)
+
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+
+        res.send("User updated successfully");
+    } catch (err) {
+        console.error(err);  
+        res.status(500).send("There is some error in updating data\n"+err.message);
     }
 });
 // #################### Finding all data #####################
