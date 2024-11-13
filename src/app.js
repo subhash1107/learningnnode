@@ -91,6 +91,24 @@ app.patch("/updatedata", async (req, res, next) => {
     }
 });
 
+// ############   #######################
+app.patch("/updatebyemail", async (req, res, next) => {
+    const Email = req.body.eMail;
+    const data = req.body;
+    try {
+        const user = await User.findOneAndUpdate({eMail:Email}, data, { returnDocument : 'before' });
+        // console.log(user)
+
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+
+        res.send("User updated successfully");
+    } catch (err) {
+        console.error(err);  
+        res.status(500).send("There is some error in updating data");
+    }
+});
 // #################### Finding all data #####################
 // app.get("/users", async (req, res, next)=>{
 //     const uSers = await User.find()
