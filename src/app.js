@@ -4,6 +4,7 @@ import { connectDb } from "./config/database.js";
 import { User } from "./models/user.js";
 import express from "express";
 import validateSignUpData from "./utils/validations.js";
+import bcrypt from "bcrypt";
 
 const app = e();
 const port = 7777;
@@ -38,11 +39,50 @@ app.get("/feed", async (req, res, next) => {
     res.send("ther is some error finding in User");
   }
 });
+
+// signup api
 app.post("/signup", async (req, res, next) => {
-  const user = new User(req.body);
+  const {
+    firstName,
+    lastName,
+    eMail,
+    password,
+    about,
+    skills,
+    age,
+    photoUrl,
+    gender,
+  } = req.body;
+  const checkMail = await User.findOne({ eMail: req.body.eMail });
+
   try {
-    
+    // checking uniqueness of email
+    if (checkMail) {
+      throw new Error("user already exist");
+    }
+
+    // bcrypting password hash
+    const { password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log(hashedPassword);
+
+    // validating data
     validateSignUpData(req);
+
+    // creating new instance of model
+    const user = new User({
+      firstName,
+      lastName,
+      eMail,
+      password: hashedPassword,
+      about,
+      skills,
+      age,
+      photoUrl,
+      gender,
+    });
+
+    // saving to db
     await user.save();
     res.send("response is submitted");
   } catch (err) {
@@ -51,6 +91,30 @@ app.post("/signup", async (req, res, next) => {
   // res.send("response submitted")
   // console.log(req.body);
 });
+
+// ########### login api #############
+app.post("/login", async (req, res, next) => {
+  try {
+    const { eMail, password } = req.body;
+
+    // checking if email is valid
+    const user = await User.findOne({ eMail: eMail });
+    if (!user) {
+      throw new Error("Invalid Credentials");
+    }
+
+    // checking if password is correct
+    const isPassword = await bcrypt.compare(password, user.password);
+    if (isPassword) {
+      res.send("login successful");
+    } else {
+      throw new Error("invalid credentials");
+    }
+  } catch (err) {
+    res.status(400).send("ERROR : " + err.message);
+  }
+});
+
 // ################### deleting user details ###################
 app.delete("/deleteuser", async (req, res, next) => {
   const UserId = req.body.UserId;

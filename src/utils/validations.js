@@ -1,7 +1,7 @@
 import validator from "validator";
-import { User } from "../models/user";
+import { User } from "../models/user.js";
 
-const validateSignUpData = (req) => {
+const validateSignUpData = async (req) => {
   const {
     firstName,
     lastName,
@@ -13,11 +13,16 @@ const validateSignUpData = (req) => {
     photoUrl,
     gender,
   } = req.body;
+//   const checkMail = await User.findOne({eMail:eMail})
+//   console.log(checkMail);
+//   if(checkMail){
+//     throw new Error("new error");
+    
+//   }
+
   if (!validator.isEmail(eMail)) {
     throw new Error("enter a valid email Id.");
-  } else if (User.findOne(eMail)){
-    throw new Error("User already exist.")
-  } else if (!validator.isURL(photoUrl,[{require_protocol:true}])) {
+  } else if (!validator.isURL(photoUrl,{require_protocol:true})) {
     throw new Error("your url is not valid");
   } else if (!validator.isStrongPassword(password)) {
     throw new Error("your password should contain atleast one capital letter, one small letter, one symbol and one numeric character.");
@@ -33,5 +38,6 @@ const validateSignUpData = (req) => {
     throw new Error("please enter a valid gender for yourself");
   }
 };
+
 
 export default validateSignUpData;
