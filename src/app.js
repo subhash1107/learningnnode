@@ -3,119 +3,130 @@ import e from "express";
 import { connectDb } from "./config/database.js";
 import { User } from "./models/user.js";
 import express from "express";
+import validateSignUpData from "./utils/validations.js";
 
-
-const app = e()
+const app = e();
 const port = 7777;
 
-app.use(express.json())
+app.use(express.json());
 
-app.get("/get", async(req,res,next)=>{
-    // const found = await User.find({eMail:"sbhash.y02@gmail.com"})
-    // const found = await User.findOne({eMail:"rohit.kohli@gmail.com"})
-    const found = await User.findOne({})
-    if(found.length != 0){
-        try{
-            console.log(found);
-            res.send("user found")
-            
-        }catch{
-            res.send("user not found")
-        }
-    }else{
-        res.send("ther is some error finding in User")
+app.get("/get", async (req, res, next) => {
+  // const found = await User.find({eMail:"sbhash.y02@gmail.com"})
+  // const found = await User.findOne({eMail:"rohit.kohli@gmail.com"})
+  const found = await User.findOne({});
+  if (found.length != 0) {
+    try {
+      console.log(found);
+      res.send("user found");
+    } catch {
+      res.send("user not found");
     }
-} )
-app.get("/feed", async(req,res,next)=>{
-    const found = await User.find({})
-    if(found.length != 0){
-        try{
-            console.log(found);
-            res.send("user found")
-            
-        }catch{
-            res.send("user not found")
-        }
-    }else{
-        res.send("ther is some error finding in User")
+  } else {
+    res.send("ther is some error finding in User");
+  }
+});
+app.get("/feed", async (req, res, next) => {
+  const found = await User.find({});
+  if (found.length != 0) {
+    try {
+      console.log(found);
+      res.send("user found");
+    } catch {
+      res.send("user not found");
     }
-} )
-app.post("/signup", async(req,res,next)=>{
-    const user = new User(
-        req.body
-    )
-     try{
-        await user.save();
-    res.send("response is submitted")
-     }
-     catch(err){
-        res.send("there is some error\n"+ err.message)
-     }
-    // res.send("response submitted")
-    // console.log(req.body);    
+  } else {
+    res.send("ther is some error finding in User");
+  }
+});
+app.post("/signup", async (req, res, next) => {
+  const user = new User(req.body);
+  try {
     
-})
+    validateSignUpData(req);
+    await user.save();
+    res.send("response is submitted");
+  } catch (err) {
+    res.send("there is some error\n" + err.message);
+  }
+  // res.send("response submitted")
+  // console.log(req.body);
+});
 // ################### deleting user details ###################
-app.delete("/deleteuser", async (req,res,next)=>{
-    const UserId = req.body.UserId
-    try{
-        const user = await User.findByIdAndDelete(UserId)
-        if (!user){
-          res.send("user not found")
-        }else{
-            res.send("user deleted successfully")
-        }
+app.delete("/deleteuser", async (req, res, next) => {
+  const UserId = req.body.UserId;
+  try {
+    const user = await User.findByIdAndDelete(UserId);
+    if (!user) {
+      res.send("user not found");
+    } else {
+      res.send("user deleted successfully");
     }
-    catch{
-        res.send("we've encountered an error while doing operation")
-    }
-})
-
+  } catch {
+    res.send("we've encountered an error while doing operation");
+  }
+});
 
 // ################### Updating data using patch #################
 app.patch("/updatedata/:UserId", async (req, res, next) => {
-    const UserId = req.params?.UserId;
-    const data = req.body;
-    try {
-        const user = await User.findByIdAndUpdate(UserId, data, { returnDocument : 'before',
-            runValidators : true,
-         });
-        // console.log(user)
+  const UserId = req.params?.UserId;
+  const data = req.body;
+  try {
+    const user = await User.findByIdAndUpdate(UserId, data, {
+      returnDocument: "before",
+      runValidators: true,
+    });
+    // console.log(user)
 
-        if (!user) {
-            return res.status(404).send("User not found");
-        }
-        const ALLOWED_UPDATE = ["firstName","lastName", "age", "about","photoUrl","skills","password",];
-        const isUpdateAllowed = Object.keys(data).every((k)=> ALLOWED_UPDATE.includes(k))
-        if(!isUpdateAllowed){
-            throw new Error("the field you want to update is not allwed");
-            
-        }
-
-        res.send("User updated successfully");
-    } catch (err) {
-        console.error(err);  
-        res.status(500).send("There is some error in updating data\n"+err.message);
+    if (!user) {
+      return res.status(404).send("User not found");
     }
+    const ALLOWED_UPDATE = [
+      "firstName",
+      "lastName",
+      "age",
+      "about",
+      "photoUrl",
+      "skills",
+      "password",
+    ];
+    const isUpdateAllowed = Object.keys(data).every((k) =>
+      ALLOWED_UPDATE.includes(k)
+    );
+    if (!isUpdateAllowed) {
+      throw new Error("the field you want to update is not allwed");
+    }
+
+    res.send("User updated successfully");
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .send("There is some error in updating data\n" + err.message);
+  }
 });
 
 // ############   #######################
 app.patch("/updatebyemail", async (req, res, next) => {
-    const Email = req.body.eMail;
-    const data = req.body;
-    try {
-        const user = await User.findOneAndUpdate({eMail:Email}, data, { returnDocument : 'before', runValidators:true });
-        // console.log(user)
+  const Email = req.body.eMail;
+  const data = req.body;
+  try {
+    const user = await User.findOneAndUpdate({ eMail: Email }, data, {
+      returnDocument: "before",
+      runValidators: true,
+    });
+    // console.log(user)
 
-        if (!user) {
-            return res.status(404).send("User not found");
-        }
-
-        res.send("User updated successfully");
-    } catch (err) {
-        console.error(err);  
-        res.status(500).send("There is some error in updating data\n"+err.message);
+    if (!user) {
+      return res.status(404).send("User not found");
     }
+
+    res.send("User updated successfully");
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .send("There is some error in updating data\n" + err.message);
+  }
 });
 // #################### Finding all data #####################
 // app.get("/users", async (req, res, next)=>{
@@ -126,9 +137,8 @@ app.patch("/updatebyemail", async (req, res, next) => {
 //     }catch{
 //         res.send("user not found")
 //     }
-    
-// })
 
+// })
 
 // const {adminAuth,userAuth} = require("./middleware/auth")
 
@@ -148,35 +158,32 @@ app.patch("/updatebyemail", async (req, res, next) => {
 //     res.send({"name":"subhash","post":"senior software developer"})
 // })
 
-
-
 //########### handling route ############
 
 // app.use("/user",(req,res,next)=>{
 //     console.log("handling the case 1");
 //     next();
-    
+
 // },
 // (req,res,next)=>{
 //     console.log("handling the case 2");
 //     next();
-    
+
 // },
 // (req,res,next)=>{
 //     console.log("handling the case 3");
 //     next();
 //     res.send("hii this is case 3 ")
-    
+
 // },
 // (req,res,next)=>{
 //     console.log("handling the case 4");
 //     res.send("hii this is case 4")
 //     // next(); in this case putting next here is not necessary
-    
+
 // }
 // );
 // ################### end ########################
-
 
 // ################ middlewares and need for it #####################
 
@@ -206,15 +213,13 @@ app.patch("/updatebyemail", async (req, res, next) => {
 // })
 // app.get("/user/login",(req,res,next)=>{
 //     console.log("login");
-    
+
 //     res.send("proceed to login")
 // })
 
-
-
 // ########### error handlers#########
 
-// 1. the best way to handle error is to use try catch method 
+// 1. the best way to handle error is to use try catch method
 
 // app.get("/user",adminAuth,(req,res,next)=>{
 //     // throw new error("parameter is not defined")
@@ -229,8 +234,7 @@ app.patch("/updatebyemail", async (req, res, next) => {
 //     throw new error("wrong input")
 // })
 
-
-// // 2. this is the way that should we memorise while writing node code 
+// // 2. this is the way that should we memorise while writing node code
 // app.use("/",(err,req,res,next)=>{
 //     if(err){
 //         res.send(err.message)
@@ -239,17 +243,13 @@ app.patch("/updatebyemail", async (req, res, next) => {
 
 // ########################################/
 
-
-
-
-
-
-connectDb().then(()=>{
+connectDb()
+  .then(() => {
     console.log("database connection established successfully");
-    app.listen(port,()=>{
-        console.log("this app is running on port ",port);
-        
-    })
-}).catch((err)=>{
-    console.log("we encountered an error" + err.message)
-})
+    app.listen(port, () => {
+      console.log("this app is running on port ", port);
+    });
+  })
+  .catch((err) => {
+    console.log("we encountered an error" + err.message);
+  });

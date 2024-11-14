@@ -1,11 +1,13 @@
 import mongoose from "mongoose";
-import validator from "validator";
+
 
 const userSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
       required: true,
+      minLength: 4,
+      maxLength: 18,
     },
     lastName: {
       type: String,
@@ -16,11 +18,11 @@ const userSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       lowercase: true,
-      validate(value) {
-        if (!validator.isEmail(value)) {
-          throw new Error("enter a valid email Id.");
-        }
-      },
+      //   validate(value) {
+      //     if (!validator.isEmail(value)) {
+      //       throw new Error("enter a valid email Id.");
+      //     }
+      //   },
     },
     password: {
       type: String,
@@ -29,35 +31,35 @@ const userSchema = new mongoose.Schema(
     photoUrl: {
       type: String,
       default: "https://tinyurl.com/profile07200",
-    //   validate(value) {
-    //     if (!validator.isURL(value)) { console.log("validating value"+value);
-        
-    //       throw new Error("enter a valid URL.");
-    //     }
-    //   }, we cant use to validate inside one schema
+      //   validate(value) {
+      //     if (!validator.isURL(value)) { console.log("validating value"+value);
+
+      //       throw new Error("enter a valid URL.");
+      //     }
+      //   }, we cant use to validate inside one schema
       validate: [
         {
-        validator: async function (value) {
-          if (value !== "https://tinyurl.com/profile07200") {
-            const existingPic = await User.findOne({ photoUrl: value });
-            if (existingPic) {
-              throw new Error(
-                "This photo URL is already taken, please choose another one."
-              );
+          validator: async function (value) {
+            if (value !== "https://tinyurl.com/profile07200") {
+              const existingPic = await User.findOne({ photoUrl: value });
+              if (existingPic) {
+                throw new Error(
+                  "This photo URL is already taken, please choose another one."
+                );
+              }
             }
-          }
-          return true;
-        },
-        message: "Invalid photo URL",
-      },{
-          validator: function(value){
-            return validator.isURL(value);
+            return true;
           },
-            message:"Invalid Url format"
-          
-      }
-    ]
-    
+          message: "Invalid photo URL",
+        },
+        //   {
+        //       validator: function(value){
+        //         return validator.isURL(value);
+        //       },
+        //         message:"Invalid Url format"
+
+        //   }
+      ],
     },
     age: {
       type: Number,
@@ -66,12 +68,8 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      // validate(value){
-      //     if(!["male","female","others"].includes(value)){
-      //         throw new Error("Kindly type a valid gender of your choice");
-
-      //     }
-      // }
+      required:true,
+      lowercase:true,
       enum: ["male", "female", "others"],
     },
     about: {
@@ -80,12 +78,12 @@ const userSchema = new mongoose.Schema(
     },
     skills: {
       type: [String],
-      validate: {
-        validator: function (value) {
-          return value.length <= 10;
-        },
-        message: "You can provide a maximum of 10 skills.",
-      },
+      //   validate: {
+      //     validator: function (value) {
+      //       return value.length <= 10;
+      //     },
+      //     message: "You can provide a maximum of 10 skills.",
+      //   },
     },
   },
   {
