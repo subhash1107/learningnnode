@@ -73,8 +73,8 @@ app.delete("/deleteuser", async (req,res,next)=>{
 
 
 // ################### Updating data using patch #################
-app.patch("/updatedata", async (req, res, next) => {
-    const UserId = req.body.UserId;
+app.patch("/updatedata/:UserId", async (req, res, next) => {
+    const UserId = req.params?.UserId;
     const data = req.body;
     try {
         const user = await User.findByIdAndUpdate(UserId, data, { returnDocument : 'before',
@@ -85,7 +85,7 @@ app.patch("/updatedata", async (req, res, next) => {
         if (!user) {
             return res.status(404).send("User not found");
         }
-        const ALLOWED_UPDATE = ["firstName","lastName", "age", "about","photoUrl","skills","password","UserId"];
+        const ALLOWED_UPDATE = ["firstName","lastName", "age", "about","photoUrl","skills","password",];
         const isUpdateAllowed = Object.keys(data).every((k)=> ALLOWED_UPDATE.includes(k))
         if(!isUpdateAllowed){
             throw new Error("the field you want to update is not allwed");
