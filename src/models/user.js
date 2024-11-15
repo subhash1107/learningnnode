@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-// import validator from "validator";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const userSchema = new mongoose.Schema(
   {
@@ -18,11 +19,6 @@ const userSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       lowercase: true,
-      //   validate(value) {
-      //     if (!validator.isEmail(value)) {
-      //       throw new Error("enter a valid email Id.");
-      //     }
-      //   },
     },
     password: {
       type: String,
@@ -31,12 +27,6 @@ const userSchema = new mongoose.Schema(
     photoUrl: {
       type: String,
       default: "https://tinyurl.com/profile07200",
-      //   validate(value) {
-      //     if (!validator.isURL(value)) { console.log("validating value"+value);
-
-      //       throw new Error("enter a valid URL.");
-      //     }
-      //   }, we cant use to validate inside one schema
       validate: [
         {
           validator: async function (value) {
@@ -52,13 +42,6 @@ const userSchema = new mongoose.Schema(
           },
           message: "Invalid photo URL",
         },
-        //   {
-        //       validator: function(value){
-        //         return validator.isURL(value);
-        //       },
-        //         message:"Invalid Url format"
-
-        //   }
       ],
     },
     age: {
@@ -68,8 +51,8 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      required:true,
-      lowercase:true,
+      required: true,
+      lowercase: true,
       enum: ["male", "female", "others"],
     },
     about: {
@@ -78,18 +61,27 @@ const userSchema = new mongoose.Schema(
     },
     skills: {
       type: [String],
-      //   validate: {
-      //     validator: function (value) {
-      //       return value.length <= 10;
-      //     },
-      //     message: "You can provide a maximum of 10 skills.",
-      //   },
     },
   },
   {
     timestamps: true,
   }
 );
+
+userSchema.methods.verifyPassword = async function (passwordInputByUser) {
+  const user = this;
+  const passwordHash = this.password;
+  const isValidated = await bcrypt.compare(passwordInputByUser, passwordHash);
+
+  return isValidated;
+};
+userSchema.methods.getJWT = async function () {
+  const user = this;
+  const createJWT = jwt.sign({ userId: user._id }, "Subhash#00$12@", {
+    expiresIn: "7d",
+  });
+  return createJWT;
+};
 
 const User = mongoose.model("User", userSchema);
 
