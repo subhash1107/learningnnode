@@ -1,15 +1,19 @@
 import e from "express";
-// import { adminAuth, userAuth } from "./middleware/auth.js";
 import { connectDb } from "./config/database.js";
 import { User } from "./models/user.js";
 import express from "express";
 import validateSignUpData from "./utils/validations.js";
 import bcrypt from "bcrypt";
+import cookieParser from "cookie-parser";
+import jwt from "jsonwebtoken"
+import { userAuth } from "./middleware/auth.js";
+
 
 const app = e();
 const port = 7777;
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.get("/get", async (req, res, next) => {
   // const found = await User.find({eMail:"sbhash.y02@gmail.com"})
@@ -40,7 +44,7 @@ app.get("/feed", async (req, res, next) => {
   }
 });
 
-// signup api
+//########## signup api ##########
 app.post("/signup", async (req, res, next) => {
   const {
     firstName,
@@ -106,6 +110,13 @@ app.post("/login", async (req, res, next) => {
     // checking if password is correct
     const isPassword = await bcrypt.compare(password, user.password);
     if (isPassword) {
+
+      // creating jwt 
+      const secretKey = "Subhash#00$12@";
+      const token = await jwt.sign({userId:user._id},secretKey,{ expiresIn: '7d' });
+
+      // sending cookie to req header 
+      res.cookie("token1",token)
       res.send("login successful");
     } else {
       throw new Error("invalid credentials");
@@ -114,6 +125,27 @@ app.post("/login", async (req, res, next) => {
     res.status(400).send("ERROR : " + err.message);
   }
 });
+
+// ############ profile api ###########
+app.get("/profile", userAuth , async (req,res,next)=>{
+  // verifying jwt 
+  try{
+     res.send(req.user)
+  }catch(err){
+    res.send("ERROR : "+ err.message)
+  }
+
+})
+
+// ############ connection request api #############
+app.get("/connectionrequest", userAuth , async(req,res)=>{
+  try {
+    const user_Name = req.user.firstName;
+     res.send(user_Name + " has sent new connection request")
+  } catch (err) {
+    res.status(400).send("ERROR: ",err.message)
+  }
+})
 
 // ################### deleting user details ###################
 app.delete("/deleteuser", async (req, res, next) => {
