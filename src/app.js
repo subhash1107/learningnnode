@@ -1,18 +1,18 @@
-import e from "express";
 import { connectDb } from "./config/database.js";
 import { User } from "./models/user.js";
 import express from "express";
 import validateSignUpData from "./utils/validations.js";
 import bcrypt from "bcrypt";
 import cookieParser from "cookie-parser";
-import jwt from "jsonwebtoken";
 import { userAuth } from "./middleware/auth.js";
+import authRouter from "./routes/auth.js";
 
-const app = e();
+const app = express();
 const port = 7777;
 
 app.use(express.json());
 app.use(cookieParser());
+app.use("/",authRouter)
 
 app.get("/get", async (req, res, next) => {
   // const found = await User.find({eMail:"sbhash.y02@gmail.com"})
@@ -44,85 +44,85 @@ app.get("/feed", async (req, res, next) => {
 });
 
 //########## signup api ##########
-app.post("/signup", async (req, res, next) => {
-  const {
-    firstName,
-    lastName,
-    eMail,
-    password,
-    about,
-    skills,
-    age,
-    photoUrl,
-    gender,
-  } = req.body;
-  const checkMail = await User.findOne({ eMail: req.body.eMail });
+// app.post("/signup", async (req, res, next) => {
+//   const {
+//     firstName,
+//     lastName,
+//     eMail,
+//     password,
+//     about,
+//     skills,
+//     age,
+//     photoUrl,
+//     gender,
+//   } = req.body;
+//   const checkMail = await User.findOne({ eMail: req.body.eMail });
 
-  try {
-    // checking uniqueness of email
-    if (checkMail) {
-      throw new Error("user already exist");
-    }
+//   try {
+//     // checking uniqueness of email
+//     if (checkMail) {
+//       throw new Error("user already exist");
+//     }
 
-    // bcrypting password hash
-    const { password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    console.log(hashedPassword);
+//     // bcrypting password hash
+//     const { password } = req.body;
+//     const hashedPassword = await bcrypt.hash(password, 10);
+//     console.log(hashedPassword);
 
-    // validating data
-    validateSignUpData(req);
+//     // validating data
+//     validateSignUpData(req);
 
-    // creating new instance of model
-    const user = new User({
-      firstName,
-      lastName,
-      eMail,
-      password: hashedPassword,
-      about,
-      skills,
-      age,
-      photoUrl,
-      gender,
-    });
+//     // creating new instance of model
+//     const user = new User({
+//       firstName,
+//       lastName,
+//       eMail,
+//       password: hashedPassword,
+//       about,
+//       skills,
+//       age,
+//       photoUrl,
+//       gender,
+//     });
 
-    // saving to db
-    await user.save();
-    res.send("response is submitted");
-  } catch (err) {
-    res.send("there is some error\n" + err.message);
-  }
-  // res.send("response submitted")
-  // console.log(req.body);
-});
+//     // saving to db
+//     await user.save();
+//     res.send("response is submitted");
+//   } catch (err) {
+//     res.send("there is some error\n" + err.message);
+//   }
+//   // res.send("response submitted")
+//   // console.log(req.body);
+// });
 
-// ########### login api #############
-app.post("/login", async (req, res, next) => {
-  try {
-    const { eMail, password } = req.body;
+// // ########### login api #############
+// app.post("/login", async (req, res, next) => {
+//   try {
+//     const { eMail, password } = req.body;
 
-    // checking if email is valid
-    const user = await User.findOne({ eMail: eMail });
-    if (!user) {
-      throw new Error("Invalid Credentials");
-    }
+//     // checking if email is valid
+//     const user = await User.findOne({ eMail: eMail });
+//     if (!user) {
+//       throw new Error("Invalid Credentials");
+//     }
 
-    // checking if password is correct
-    const isPassword = await user.verifyPassword(password);
-    if (isPassword) {
-      // creating jwt
-      const token = await user.getJWT();
-      console.log(token);
+//     // checking if password is correct
+//     const isPassword = await user.verifyPassword(password);
+//     if (isPassword) {
+//       // creating jwt
+//       const token = await user.getJWT();
+//       console.log(token);
 
-      // sending cookie to req header
-      res.cookie("token1", token);
-      res.send("login successful");
-    } else {
-      throw new Error("invalid credentials");
-    }
-  } catch (err) {
-    res.status(400).send("ERROR : " + err.message);
-  }
-});
+//       // sending cookie to req header
+//       res.cookie("token1", token);
+//       res.send("login successful");
+//     } else {
+//       throw new Error("invalid credentials");
+//     }
+//   } catch (err) {
+//     res.status(400).send("ERROR : " + err.message);
+//   }
+// });
 
 // ############ profile api ###########
 app.get("/profile", userAuth, async (req, res, next) => {
@@ -135,7 +135,7 @@ app.get("/profile", userAuth, async (req, res, next) => {
 });
 
 // ############ connection request api #############
-app.get("/connectionrequest", userAuth, async (req, res) => {
+app.post("/connectionrequest", userAuth, async (req, res) => {
   try {
     const user_Name = req.user.firstName;
     res.send(user_Name + " has sent new connection request");
