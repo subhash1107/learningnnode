@@ -27,22 +27,22 @@ const userSchema = new mongoose.Schema(
     photoUrl: {
       type: String,
       default: "https://tinyurl.com/profile07200",
-      validate: [
-        {
-          validator: async function (value) {
-            if (value !== "https://tinyurl.com/profile07200") {
-              const existingPic = await User.findOne({ photoUrl: value });
-              if (existingPic) {
-                throw new Error(
-                  "This photo URL is already taken, please choose another one."
-                );
-              }
-            }
-            return true;
-          },
-          message: "Invalid photo URL",
-        },
-      ],
+      // validate: [
+      //   {
+      //     validator: async function (value) {
+      //       if (value !== "https://tinyurl.com/profile07200") {
+      //         const existingPic = await User.findOne({ photoUrl: value });
+      //         if (existingPic) {
+      //           throw new Error(
+      //             "This photo URL is already taken, please choose another one."
+      //           );
+      //         }
+      //       }
+      //       return true;
+      //     },
+      //     message: "Invalid photo URL",
+      //   },
+      // ],
     },
     age: {
       type: Number,
@@ -51,7 +51,6 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      required: true,
       lowercase: true,
       enum: ["male", "female", "others"],
     },

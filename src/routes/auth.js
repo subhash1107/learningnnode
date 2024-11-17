@@ -1,6 +1,6 @@
 import { User } from "../models/user.js";
 import express from "express";
-import validateSignUpData from "../utils/validations.js";
+import {validateSignUpData} from "../utils/validations.js";
 import bcrypt from "bcrypt";
 // import cookieParser from "cookie-parser";
 // import { userAuth } from "./middleware/auth.js";
@@ -16,11 +16,6 @@ authRouter.post("/signup", async (req, res, next) => {
       lastName,
       eMail,
       password,
-      about,
-      skills,
-      age,
-      photoUrl,
-      gender,
     } = req.body;
     const checkMail = await User.findOne({ eMail: req.body.eMail });
   
@@ -31,11 +26,11 @@ authRouter.post("/signup", async (req, res, next) => {
       }
   
       // bcrypting password hash
-      const { password } = req.body;
+      // const { password } = req.body;
       const hashedPassword = await bcrypt.hash(password, 10);
         
       // validating data
-      validateSignUpData(req);
+      validateSignUpData(req,res);
   
       // creating new instance of model
       const user = new User({
@@ -43,11 +38,6 @@ authRouter.post("/signup", async (req, res, next) => {
         lastName,
         eMail,
         password: hashedPassword,
-        about,
-        skills,
-        age,
-        photoUrl,
-        gender,
       });
   
       // saving to db
@@ -56,8 +46,6 @@ authRouter.post("/signup", async (req, res, next) => {
     } catch (err) {
       res.send("there is some error\n" + err.message);
     }
-    // res.send("response submitted")
-    // console.log(req.body);
   });
   
   // ########### login api #############

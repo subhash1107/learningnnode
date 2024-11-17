@@ -1,18 +1,20 @@
 import { connectDb } from "./config/database.js";
 import { User } from "./models/user.js";
 import express from "express";
-import validateSignUpData from "./utils/validations.js";
-import bcrypt from "bcrypt";
 import cookieParser from "cookie-parser";
 import { userAuth } from "./middleware/auth.js";
 import authRouter from "./routes/auth.js";
+import profileRouter from "./routes/profile.js";
+import connectionRouter from "./routes/requests.js";
 
 const app = express();
 const port = 7777;
 
 app.use(express.json());
 app.use(cookieParser());
-app.use("/",authRouter)
+app.use("/",authRouter);
+app.use("/",profileRouter);
+app.use("/",connectionRouter);
 
 app.get("/get", async (req, res, next) => {
   // const found = await User.find({eMail:"sbhash.y02@gmail.com"})
@@ -125,14 +127,14 @@ app.get("/feed", async (req, res, next) => {
 // });
 
 // ############ profile api ###########
-app.get("/profile", userAuth, async (req, res, next) => {
-  // verifying jwt
-  try {
-    res.send(req.user);
-  } catch (err) {
-    res.send("ERROR : " + err.message);
-  }
-});
+// app.get("/profile", userAuth, async (req, res, next) => {
+//   // verifying jwt
+//   try {
+//     res.send(req.user);
+//   } catch (err) {
+//     res.send("ERROR : " + err.message);
+//   }
+// });
 
 // ############ connection request api #############
 app.post("/connectionrequest", userAuth, async (req, res) => {
