@@ -6,6 +6,7 @@ import { userAuth } from "./middleware/auth.js";
 import authRouter from "./routes/auth.js";
 import profileRouter from "./routes/profile.js";
 import connectionRouter from "./routes/requests.js";
+import userRouter from "./routes/user.js";
 
 const app = express();
 const port = 7777;
@@ -15,6 +16,7 @@ app.use(cookieParser());
 app.use("/",authRouter);
 app.use("/",profileRouter);
 app.use("/",connectionRouter);
+app.use("/",userRouter);
 
 app.get("/get", async (req, res, next) => {
   // const found = await User.find({eMail:"sbhash.y02@gmail.com"})
