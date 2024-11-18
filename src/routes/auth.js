@@ -10,7 +10,7 @@ const authRouter = express.Router();
 
 
 //########## signup api ##########
-authRouter.post("/signup", async (req, res, next) => {
+authRouter.post("/signup", validateSignUpData, async (req, res, next) => {
     const {
       firstName,
       lastName,
@@ -29,8 +29,8 @@ authRouter.post("/signup", async (req, res, next) => {
       // const { password } = req.body;
       const hashedPassword = await bcrypt.hash(password, 10);
         
-      // validating data
-      validateSignUpData(req,res);
+      // // validating data
+      // validateSignUpData(req,res);
   
       // creating new instance of model
       const user = new User({

@@ -13,8 +13,10 @@ const validateSignUpData = async (req,res) => {
 //     throw new Error("new error");
     
 //   }
-try{ 
-  if (!validator.isEmail(eMail)) {
+try{
+  if(!eMail || !firstName || !password){
+    throw new Error("eMail, firstName and password is required to signin");
+  } else if (!validator.isEmail(eMail)) {
     throw new Error("enter a valid email Id.");
   } else if (!validator.isStrongPassword(password)) {
     throw new Error("your password should contain atleast one Upper case, one lowercase, one symbol and one numeric character.");
