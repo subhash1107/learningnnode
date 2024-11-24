@@ -26,34 +26,55 @@ try{
     res.send("ERROR: "+ err.message)
   }
 };
-const validateEditProfileData = async (req,res)=>{
-  try{
-  const allowedUpdate = ["firstName", "skills", "gender", "age", "about","photoUrl","lastName"];
-  const isUpdateAllowed = Object.keys(req.body).every((field)=>allowedUpdate.includes(field));
-  if(!isUpdateAllowed){
-    throw new Error("Update not allowed.");
-    
+const validateEditProfileData = async (req,res,next) => {
+  try {
+    const allowedUpdate = ["firstName", "skills", "gender", "age", "about", "photoUrl", "lastName"];
+    const isUpdateAllowed = Object.keys(req.body).every((field) => allowedUpdate.includes(field));
+    if (!isUpdateAllowed) {
+      throw new Error("Update not allowed.");
+    }
+
+    const { firstName, skills, gender, age, about, photoUrl, lastName } = req.body;
+
+    // Ensure the name fields are provided and within limits
+    if (firstName&&firstName.length > 30 || lastName&&lastName.length > 30) {
+      throw new Error("The name should be within 30 characters");
+    }
+
+    // Validate skills and about fields
+    if (skills && skills.length > 10) {
+      throw new Error("Kindly enter your best 10 skills");
+    }
+
+    if (about && about.length > 500) {
+      throw new Error("Kindly brief yourself within 500 characters");
+    }
+
+    // Age validation
+    if (age < 18 || age > 90) {
+      throw new Error("You are not eligible according to your age");
+    }
+
+    // Gender validation
+    if (!["male", "female", "others"].includes(gender)) {
+      throw new Error("Please enter a valid gender for yourself");
+    }
+
+    // Prevent changing gender once saved
+    // if (req.user.gender) {
+    //   throw new Error("Can't change gender once saved");
+    // }
+
+    // Validate photo URL
+    if (photoUrl && !validator.isURL(photoUrl, { require_protocol: true })) {
+      throw new Error("Your URL is not valid");
+    }
+    next()
+  } catch (err) {
+    res.send("ERROR: " + err.message);
   }
-  const {firstName, skills, gender, age, about,photoUrl,lastName} = req.body;
-  if (firstName.length>30 || lastName.length > 30) {
-        throw new Error("the name should be within 30 characters");
-      } else if (skills.length > 10) {
-        throw new Error("kindly enter your best 10 skills");
-      } else if (about.length > 500) {
-        throw new Error("kindly brief yourself within 500 characters");
-      } else if (age < 18 || age > 90) {
-        throw new Error("you are not eligible according to your age");
-      } else if (!["male", "female", "others"].includes(gender)) {
-        throw new Error("please enter a valid gender for yourself");
-      } else if (req.user.gender){
-        throw new Error("can't change gender once saved");
-      } else if (!validator.isURL(photoUrl,{require_protocol:true})) {
-        throw new Error("your url is not valid");
-      } }catch(err){
-        res.send("ERROR: "+err.message);
-        
-      }
-}
+};
+
 const validatePasswordData = (req,res)=>{
   try{
   const allowedUpdate = ["currentPassword","newPassword"];

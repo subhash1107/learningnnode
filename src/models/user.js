@@ -26,11 +26,11 @@ const userSchema = new mongoose.Schema(
     },
     photoUrl: {
       type: String,
-      default: "https://tinyurl.com/profile07200",
+      default: "https://i.pinimg.com/280x280_RS/e3/fc/f6/e3fcf6baaae5099edae7867dccd23854.jpg",
       // validate: [
       //   {
       //     validator: async function (value) {
-      //       if (value !== "https://tinyurl.com/profile07200") {
+      //       if (value !== "https://i.pinimg.com/280x280_RS/e3/fc/f6/e3fcf6baaae5099edae7867dccd23854.jpg") {
       //         const existingPic = await User.findOne({ photoUrl: value });
       //         if (existingPic) {
       //           throw new Error(

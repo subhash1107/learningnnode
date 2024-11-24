@@ -61,13 +61,14 @@ authRouter.post("/signup", validateSignUpData, async (req, res, next) => {
   
       // checking if password is correct
       const isPassword = await user.verifyPassword(password);
+      
       if (isPassword) {
         // creating jwt
         const token = await user.getJWT();
           
         // sending cookie to req header
         res.cookie("token1", token);
-        res.send("login successful");
+        res.send(user);
       } else {
         throw new Error("invalid credentials");
       }

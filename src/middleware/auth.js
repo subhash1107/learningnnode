@@ -4,7 +4,7 @@ import { User } from "../models/user.js";
 const userAuth = async (req, res, next) => {
     try {
         if (!req.cookies || !req.cookies.token1) {
-            throw new Error("Not a valid user");
+             return res.status(401).send("Please Login")
         }
 
         // Verify the JWT token 
