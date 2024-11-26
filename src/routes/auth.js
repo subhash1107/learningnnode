@@ -41,10 +41,17 @@ authRouter.post("/signup", validateSignUpData, async (req, res, next) => {
       });
   
       // saving to db
-      await user.save();
-      res.send("response is submitted");
+      const savedUser = await user.save();
+              // creating jwt
+              const token = await savedUser.getJWT();
+          
+              // sending cookie to req header
+              res.cookie("token1", token, { expires: new Date(Date.now() + 8 * 60 * 60 * 1000) });
+
+
+      return res.send(savedUser);
     } catch (err) {
-      res.send("there is some error\n" + err.message);
+      return res.send("there is some error\n" + err.message);
     }
   });
   
@@ -67,13 +74,14 @@ authRouter.post("/signup", validateSignUpData, async (req, res, next) => {
         const token = await user.getJWT();
           
         // sending cookie to req header
-        res.cookie("token1", token);
-        res.send(user);
+        res.cookie("token1", token, { expires: new Date(Date.now() + 8 * 60 * 60 * 1000) });
+
+        return res.send(user);
       } else {
         throw new Error("invalid credentials");
       }
     } catch (err) {
-      res.status(400).send("ERROR : " + err.message);
+      return res.status(400).send("ERROR : " + err.message);
     }
   });
 
@@ -84,7 +92,7 @@ authRouter.post("/signup", validateSignUpData, async (req, res, next) => {
   // res.cookie("token1",null,{expires:new Date(Date.now())})
 
   res.clearCookie("token1")
-  res.send("logout successfully")
+  return res.send("logout successfully")
  })
 
   export default authRouter;

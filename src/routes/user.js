@@ -21,13 +21,10 @@ userRouter.get("/user/requests", userAuth, async (req,res,next)=>{
         
       }
 
-      const usersName = foundRequest.map((requests)=>{
-        const {firstName,lastName} = requests.fromUserId;
-        return `${firstName} ${lastName}`
-      }) 
+
 
     //  console.log(usersName);    
-      res.send(usersName.join(", ")+" sent you request"); 
+      res.send(foundRequest); 
     } catch (err) {
         res.status(400).send("ERROR: " + err.message)
     }
