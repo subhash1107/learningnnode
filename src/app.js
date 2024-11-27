@@ -6,11 +6,13 @@ import { userAuth } from "./middleware/auth.js";
 import authRouter from "./routes/auth.js";
 import profileRouter from "./routes/profile.js";
 import connectionRouter from "./routes/requests.js";
+import dotenv from "dotenv";
 import userRouter from "./routes/user.js";
 import cors from "cors"
 
 const app = express();
-const port = 7777;
+dotenv.config()
+const port = process.env.PORT || 3000;
 
 app.use(cors({
   origin:"http://localhost:5173",
