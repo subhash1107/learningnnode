@@ -2,12 +2,7 @@ import validator from "validator";
 
 const validateSignUpData = async (req, res, next) => {
   const { firstName, lastName, eMail, password } = req.body;
-  //   const checkMail = await User.findOne({eMail:eMail})
-  //   console.log(checkMail);
-  //   if(checkMail){
-  //     throw new Error("new error");
 
-  //   }
   try {
     if (!eMail || !firstName || !password) {
       throw new Error("eMail, firstName and password is required to signin");
@@ -55,8 +50,17 @@ const validateEditProfileData = async (req, res, next) => {
     }
 
     // Validate skills and about fields
-    if (skills && skills.length > 10) {
-      throw new Error("Kindly enter your best 10 skills");
+    if (skills) {
+      try{
+      let skillsArray = JSON.parse(skills)
+      if(skillsArray.length > 10){
+        console.log(skills.length);
+        
+      throw new Error("Kindly enter your best 10 skills");}
+      req.body.skills = skillsArray
+      }catch(err){
+        return res.status(400).send(err.message)
+      }
     }
 
     if (about && about.length > 500) {
@@ -69,6 +73,8 @@ const validateEditProfileData = async (req, res, next) => {
     }
 
     // Gender validation
+    
+    
     if (!["male", "female", "others"].includes(gender)) {
       throw new Error("Please enter a valid gender for yourself");
     }
@@ -84,7 +90,7 @@ const validateEditProfileData = async (req, res, next) => {
     }
     next();
   } catch (err) {
-    res.send("ERROR: " + err.message);
+    res.status(400).send("ERROR: " + err.message);
   }
 };
 

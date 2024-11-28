@@ -2,6 +2,8 @@ import express from "express"
 import { userAuth } from "../middleware/auth.js";
 import bcrypt from "bcrypt"
 import { validateEditProfileData } from "../utils/validations.js";
+import { upload } from "../middleware/multer.middleware.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const profileRouter = express.Router();
 
@@ -17,12 +19,21 @@ profileRouter.get("/profile/view", userAuth, async (req, res, next) => {
   });
 
 // ################ editing profile ###############
-profileRouter.patch("/profile/edit", userAuth,validateEditProfileData, async (req,res,next) =>{
+profileRouter.patch("/profile/edit", userAuth,upload.single("photo"),validateEditProfileData, async (req,res,next) =>{
   
   try {
     const loggedInUser = req.user;
-       
-    Object.keys(req.body).forEach((key)=>loggedInUser[key]=req.body[key]);
+      
+           
+    Object.keys(req.body).forEach((key)=>{
+      if(key != "photoUrl"){
+        loggedInUser[key]=req.body[key]
+      }
+  });
+  if(req.file){
+    const cloudinary_response = await uploadOnCloudinary(req.file.path);
+    loggedInUser.photoUrl = cloudinary_response;    
+  }
     
     await loggedInUser.save();    
     res.send(loggedInUser)

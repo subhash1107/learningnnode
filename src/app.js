@@ -1,3 +1,4 @@
+import configEnv from "./utils/config.js";
 import { connectDb } from "./config/database.js";
 import { User } from "./models/user.js";
 import express from "express";
@@ -6,13 +7,11 @@ import { userAuth } from "./middleware/auth.js";
 import authRouter from "./routes/auth.js";
 import profileRouter from "./routes/profile.js";
 import connectionRouter from "./routes/requests.js";
-import dotenv from "dotenv";
 import userRouter from "./routes/user.js";
 import cors from "cors"
 
 const app = express();
-dotenv.config()
-const port = process.env.PORT || 3000;
+const port = configEnv.PORT || 3000;
 
 app.use(cors({
   origin:"http://localhost:5173",
@@ -26,8 +25,7 @@ app.use("/",connectionRouter);
 app.use("/",userRouter);
 
 app.get("/get", async (req, res, next) => {
-  // const found = await User.find({eMail:"sbhash.y02@gmail.com"})
-  // const found = await User.findOne({eMail:"rohit.kohli@gmail.com"})
+
   const found = await User.findOne({});
   if (found.length != 0) {
     try {
@@ -54,106 +52,7 @@ app.get("/feed", async (req, res, next) => {
   }
 });
 
-//########## signup api ##########
-// app.post("/signup", async (req, res, next) => {
-//   const {
-//     firstName,
-//     lastName,
-//     eMail,
-//     password,
-//     about,
-//     skills,
-//     age,
-//     photoUrl,
-//     gender,
-//   } = req.body;
-//   const checkMail = await User.findOne({ eMail: req.body.eMail });
 
-//   try {
-//     // checking uniqueness of email
-//     if (checkMail) {
-//       throw new Error("user already exist");
-//     }
-
-//     // bcrypting password hash
-//     const { password } = req.body;
-//     const hashedPassword = await bcrypt.hash(password, 10);
-//     console.log(hashedPassword);
-
-//     // validating data
-//     validateSignUpData(req);
-
-//     // creating new instance of model
-//     const user = new User({
-//       firstName,
-//       lastName,
-//       eMail,
-//       password: hashedPassword,
-//       about,
-//       skills,
-//       age,
-//       photoUrl,
-//       gender,
-//     });
-
-//     // saving to db
-//     await user.save();
-//     res.send("response is submitted");
-//   } catch (err) {
-//     res.send("there is some error\n" + err.message);
-//   }
-//   // res.send("response submitted")
-//   // console.log(req.body);
-// });
-
-// // ########### login api #############
-// app.post("/login", async (req, res, next) => {
-//   try {
-//     const { eMail, password } = req.body;
-
-//     // checking if email is valid
-//     const user = await User.findOne({ eMail: eMail });
-//     if (!user) {
-//       throw new Error("Invalid Credentials");
-//     }
-
-//     // checking if password is correct
-//     const isPassword = await user.verifyPassword(password);
-//     if (isPassword) {
-//       // creating jwt
-//       const token = await user.getJWT();
-//       console.log(token);
-
-//       // sending cookie to req header
-//       res.cookie("token1", token);
-//       res.send("login successful");
-//     } else {
-//       throw new Error("invalid credentials");
-//     }
-//   } catch (err) {
-//     res.status(400).send("ERROR : " + err.message);
-//   }
-// });
-
-// ############ profile api ###########
-// app.get("/profile", userAuth, async (req, res, next) => {
-//   // verifying jwt
-//   try {
-//     res.send(req.user);
-//   } catch (err) {
-//     res.send("ERROR : " + err.message);
-//   }
-// });
-
-// ############ connection request api #############
-app.post("/connectionrequest", userAuth, async (req, res) => {
-  try {
-    const user_Name = req.user.firstName;
-    res.send(user_Name + " has sent new connection request");
-  } catch (err) {
-    res.status(400).send("ERROR: ", err.message);
-  }
-});
 
 // ################### deleting user details ###################
 app.delete("/deleteuser", async (req, res, next) => {
