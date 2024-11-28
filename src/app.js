@@ -24,33 +24,6 @@ app.use("/",profileRouter);
 app.use("/",connectionRouter);
 app.use("/",userRouter);
 
-app.get("/get", async (req, res, next) => {
-
-  const found = await User.findOne({});
-  if (found.length != 0) {
-    try {
-      console.log(found);
-      res.send("user found");
-    } catch {
-      res.send("user not found");
-    }
-  } else {
-    res.send("ther is some error finding in User");
-  }
-});
-app.get("/feed", async (req, res, next) => {
-  const found = await User.find({});
-  if (found.length != 0) {
-    try {
-      console.log(found);
-      res.send("user found");
-    } catch {
-      res.send("user not found");
-    }
-  } else {
-    res.send("ther is some error finding in User");
-  }
-});
 
 connectDb()
   .then(() => {
