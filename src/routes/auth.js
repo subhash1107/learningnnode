@@ -68,12 +68,12 @@ authRouter.post("/login", async (req, res, next) => {
       const token = await user.getJWT();
 
       // sending cookie to req header
-      // res.cookie("token1", token, {
-      //   expires: new Date(Date.now() + 8 * 60 * 60 * 1000),
-      //   httpOnly: true,
-      //   secure: process.env.NODE_ENV === "production",
-      //   sameSite: "None",
-      // });
+      res.cookie("token1", token, {
+        expires: new Date(Date.now() + 8 * 60 * 60 * 1000),
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "None",
+      });
 
       return res.json({user,token});
     } else {
