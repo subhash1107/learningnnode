@@ -39,13 +39,13 @@ authRouter.post("/signup", validateSignUpData, async (req, res, next) => {
     const token = await savedUser.getJWT();
 
     // sending cookie to req header
-    res.cookie("token1", token, {
-      expires: new Date(Date.now() + 8 * 60 * 60 * 1000),
-    });
+    // res.cookie("token1", token, {
+    //   expires: new Date(Date.now() + 8 * 60 * 60 * 1000),
+    // });
 
-    return res.send(savedUser);
+    return res.json({data:savedUser,token:token});
   } catch (err) {
-    return res.send("there is some error\n" + err.message);
+    return res.status(400).send("there is some error\n" + err.message);
   }
 });
 
