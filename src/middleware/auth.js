@@ -3,12 +3,20 @@ import { User } from "../models/user.js";
 
 const userAuth = async (req, res, next) => {
     try {
-        if (!req.cookies || !req.cookies.token1) {
-             return res.status(401).send("Please Login")
-        }
-
+        // if (!req.cookies || !req.cookies.token1) {
+        //      return res.status(401).send("Please Login")
+        // }
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            return res.status(401).send("Please Login");
+          }
+      
+          const token = authHeader.split(' ')[1];
+          if(!token){
+            return res.status(401).send("token not provided")
+          }
         // Verify the JWT token 
-        const decodedValue = jwt.verify(req.cookies.token1, "Subhash#00$12@");
+        const decodedValue = jwt.verify(token, "Subhash#00$12@");
         const { userId } = decodedValue;
 
         // Fetch the user from the database
