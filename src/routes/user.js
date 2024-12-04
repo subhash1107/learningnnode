@@ -24,9 +24,9 @@ userRouter.get("/user/requests", userAuth, async (req,res,next)=>{
 
 
     //  console.log(usersName);    
-      res.send(foundRequest); 
+      return res.send(foundRequest); 
     } catch (err) {
-        res.status(400).send("ERROR: " + err.message)
+        return res.status(400).send("ERROR: " + err.message)
     }
 })
 
@@ -52,12 +52,12 @@ userRouter.get("/user/connections", userAuth, async (req,res,next)=>{
       return reqData.fromUserId;
     })
     if(data.length === 0){
-       res.send("you don't have any connections made")
+       return res.send("you don't have any connections made")
     }
     
-    res.json({message:data})
+    return res.json({message:data})
   } catch (err) {
-    res.status(400).json({message:"ERROR: "+ err.message})
+    return res.status(400).json({message:"ERROR: "+ err.message})
   }
 })
 
@@ -91,9 +91,9 @@ userRouter.get("/user/feed", userAuth, async (req,res,next)=>{
     .skip(skip) 
     
 
-    res.json({message:user})
+    return res.json({message:user})
   } catch (err) {
-    res.status(400).send("ERROR: "+ err.message)
+    return res.status(400).send("ERROR: "+ err.message)
   }
 })
 
