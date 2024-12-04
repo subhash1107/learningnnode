@@ -16,10 +16,10 @@ userRouter.get("/user/requests", userAuth, async (req,res,next)=>{
         status:"interested"
       }).populate("fromUserId", SAFE_DATA_OUTPUT)
 
-      if(!foundRequest){
-        throw new Error("request not exist");
+      // if(!foundRequest){
+      //   throw new Error("request not exist");
         
-      }
+      // }
 
 
 
