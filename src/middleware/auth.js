@@ -10,11 +10,11 @@ const userAuth = async (req, res, next) => {
         const authHeader = await req.headers.authorization;
         console.log(authHeader+" authheader");
         
-        if (!authHeader) {
-            return res.status(401).send("Please Login");
-            }
+        // if (!authHeader) {
+        //     return res.status(401).send("Please Login");
+        //     }
       
-          const token = authHeader.split(' ')[1];
+        const token = authHeader.split(' ')[1];
         if(!token){
             return res.status(401).send("token not provided")
           }
