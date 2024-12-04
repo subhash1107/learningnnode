@@ -45,7 +45,7 @@ userRouter.get("/user/connections", userAuth, async (req,res,next)=>{
     }).populate("fromUserId",SAFE_DATA_OUTPUT)
     .populate("toUserId",SAFE_DATA_OUTPUT);
 
-    const data = yourConnections.map((reqData)=>{
+    const data = await yourConnections.map((reqData)=>{
       if(reqData.fromUserId._id.equals(req.user._id)){
         return reqData.toUserId;
       }
