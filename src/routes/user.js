@@ -16,15 +16,14 @@ userRouter.get("/user/requests", userAuth, async (req,res,next)=>{
         status:"interested"
       }).populate("fromUserId", SAFE_DATA_OUTPUT)
 
-      // if(!foundRequest){
-      //   throw new Error("request not exist");
-        
-      // }
+      if (foundRequest.length === 0) {
+        return res.json({ message: "No connection requests found", requests: [] });
+      }
 
 
 
     //  console.log(usersName);    
-      return res.send(foundRequest); 
+    return res.json({ message: "Connection requests retrieved", requests: foundRequest }); 
     } catch (err) {
         return res.status(400).send("ERROR: " + err.message)
     }

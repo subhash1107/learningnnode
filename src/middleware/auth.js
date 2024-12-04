@@ -8,8 +8,9 @@ const userAuth = async (req, res, next) => {
         // }
         
         const authHeader = await req.headers.authorization;
-        console.log(authHeader+" authheader");
-        
+        if(authHeader){
+        console.log("authheader found");
+        }
         // if (!authHeader) {
         //     return res.status(401).send("Please Login");
         //     }
