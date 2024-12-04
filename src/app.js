@@ -14,9 +14,10 @@ const app = express();
 const port = configEnv.PORT || 3000;
 
 app.use(cors({
-  origin:"https://dev-tinder-f.vercel.app",
-  credentials:true,
-}))
+  origin: configEnv.CORS_URL,
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 app.use(cookieParser());
 app.use("/",authRouter);

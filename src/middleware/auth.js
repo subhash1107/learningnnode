@@ -6,13 +6,16 @@ const userAuth = async (req, res, next) => {
         // if (!req.cookies || !req.cookies.token1) {
         //      return res.status(401).send("Please Login")
         // }
-        const authHeader = req.headers.authorization;
+        
+        const authHeader = await req.headers.authorization;
+        console.log(authHeader+" authheader");
+        
         if (!authHeader) {
             return res.status(401).send("Please Login");
-          }
+            }
       
           const token = authHeader.split(' ')[1];
-          if(!token){
+        if(!token){
             return res.status(401).send("token not provided")
           }
         // Verify the JWT token 
