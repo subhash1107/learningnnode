@@ -16,7 +16,7 @@ const userAuth = async (req, res, next) => {
       
         const token = authHeader.split(' ')[1];
         if(!token){
-            return res.status(401).send("token not provided")
+            return res.status(401).send("Please Login")
           }
         // Verify the JWT token 
         const decodedValue = jwt.verify(token, "Subhash#00$12@");
