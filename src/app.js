@@ -9,6 +9,7 @@ import profileRouter from "./routes/profile.js";
 import connectionRouter from "./routes/requests.js";
 import userRouter from "./routes/user.js";
 import cors from "cors"
+import healthRouter from "./routes/health.js";
 
 const app = express();
 const port = configEnv.PORT || 3000;
@@ -24,6 +25,7 @@ app.use("/",authRouter);
 app.use("/",profileRouter);
 app.use("/",connectionRouter);
 app.use("/",userRouter);
+app.use("/",healthRouter);
 
 
 connectDb()
